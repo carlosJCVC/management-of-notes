@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const User = require('../models/User');
+const passport = require('passport');
 
 router.get('/users', (req, res) => {
     res.send('index users');
@@ -8,6 +9,12 @@ router.get('/users', (req, res) => {
 router.get('/users/signin', (req, res) => {
     res.render('signin');
 });
+
+router.post('/users/signin', passport.authenticate('local', {
+    successRedirect: '/notes',
+    failureRedirect: '/users/signin',
+    failureFlash: true
+}));
 
 router.get('/users/signup', (req, res) => {
     res.render('signup');
@@ -39,6 +46,11 @@ router.post('/users/storageUser', async (req, res) => {
         req.flash('success_msg', 'You are registered');
         res.redirect('/users/signin');
     }
+});
+
+router.get('/users/logout', (req, res) => {
+    req.logout();
+    res.redirect('/');
 });
 
 module.exports = router;
